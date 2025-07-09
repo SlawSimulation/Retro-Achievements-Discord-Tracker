@@ -1,7 +1,7 @@
 name: Test Discord Embed
 
 on:
-  workflow_dispatch:  # Manual trigger in Actions tab
+  workflow_dispatch:
 
 jobs:
   test-discord:
@@ -18,8 +18,10 @@ jobs:
 
       - name: Install dependencies
         run: pip install requests
+        working-directory: ./Retro-Achievements-Discord-Tracker
 
       - name: Run test embed post
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: python post_to_discord_embed.py
+        working-directory: ./Retro-Achievements-Discord-Tracker
