@@ -1,16 +1,14 @@
-name: Check RetroAchievements
+name: Test Discord Embed
 
 on:
-  schedule:
-    - cron: "*/10 * * * *"  # Every 10 minutes
-  workflow_dispatch:
+  workflow_dispatch:  # allows manual trigger
 
 jobs:
-  check_achievements:
+  test-discord:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Set up Python
@@ -21,15 +19,7 @@ jobs:
       - name: Install dependencies
         run: pip install requests
 
-      - name: Run checker
+      - name: Run test embed post
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        run: python check_achievements.py
-
-      - name: Commit updated users.json
-        run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
-          git add users.json
-          git commit -m "Update last_check timestamps" || echo "No changes"
-          git push
+        run: python post_to_discord_embed.py
