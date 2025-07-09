@@ -2,9 +2,13 @@ import os
 import requests
 from datetime import datetime
 
-WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL") or "https://discord.com/api/webhooks/..."
+WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL")
 
 def test_embed_post():
+    if not WEBHOOK_URL:
+        print("❌ DISCORD_WEBHOOK_URL is not set.")
+        return
+
     embed = {
         "title": "🏆 SlawPro unlocked an achievement!",
         "description": "**First Steps**\nYou started your retro journey!",
@@ -20,7 +24,7 @@ def test_embed_post():
     }
 
     payload = {
-        "username": "RA-Bot",
+        "username": "RA-TestBot",
         "avatar_url": "https://retroachievements.org/favicon.ico",
         "embeds": [embed]
     }
