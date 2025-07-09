@@ -19,8 +19,10 @@ jobs:
       - name: Install dependencies
         run: pip install requests
 
-      - name: Show working directory contents (debug)
-        run: ls -al
+      - name: Show current directory and files (debug)
+        run: |
+          pwd
+          ls -al
 
       - name: Run test embed post
         env:
