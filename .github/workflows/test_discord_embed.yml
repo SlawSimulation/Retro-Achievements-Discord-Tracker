@@ -18,6 +18,7 @@ jobs:
 
       - name: Install dependencies
         run: pip install requests
+        working-directory: ./ 
 
       - name: Show working directory contents (debug)
         run: ls -al
@@ -26,3 +27,4 @@ jobs:
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: python post_to_discord_embed.py
+        working-directory: ./
