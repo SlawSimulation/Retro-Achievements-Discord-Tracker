@@ -1,0 +1,1 @@
+[![Test Discord Embed](https://github.com/SlawSimulation/Retro-Achievements-Discord-Tracker/actions/workflows/test_discord_embed.yml/badge.svg)](https://github.com/SlawSimulation/Retro-Achievements-Discord-Tracker/actions/workflows/test_discord_embed.yml)
