@@ -1,14 +1,12 @@
 [
   {
-    "discord_id": "123456789012345678",
-    "ra_username": "SlawPro",
-    "ra_api_key": "YOUR_RA_API_KEY",
-    "last_check": "2025-07-09T00:00:00Z"
+    "username": "SlawPro",
+    "api_key": "your_api_key_here",
+    "last_checked": 0
   },
   {
-    "discord_id": "234567890123456789",
-    "ra_username": "AnotherUser",
-    "ra_api_key": "THEIR_API_KEY",
-    "last_check": "2025-07-09T00:00:00Z"
+    "username": "AnotherUser",
+    "api_key": "another_key",
+    "last_checked": 0
   }
 ]
