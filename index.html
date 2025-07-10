@@ -1,35 +1,160 @@
-<!-- index.html -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8"/>
+  <meta charset="utf-8" />
   <title>Link RetroAchievements</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 400px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    label {
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      box-sizing: border-box;
+    }
+    button {
+      padding: 10px 15px;
+      font-size: 16px;
+      cursor: pointer;
+      position: relative;
+    }
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    #status {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    /* Spinner styles */
+    .spinner {
+      border: 2px solid #f3f3f3; /* Light grey */
+      border-top: 2px solid #555; /* Darker grey */
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      animation: spin 1s linear infinite;
+      position: absolute;
+      top: 50%;
+      left: 10px;
+      transform: translateY(-50%);
+    }
+    @keyframes spin {
+      0% { transform: translateY(-50%) rotate(0deg); }
+      100% { transform: translateY(-50%) rotate(360deg); }
+    }
+  </style>
 </head>
 <body>
   <h2>Link your RetroAchievements account</h2>
-  <form id="linkForm">
-    <label>Discord ID:</label><br/>
-    <input type="text" id="discordId" required/><br/><br/>
-    <label>RA Username:</label><br/>
-    <input type="text" id="username" required/><br/><br/>
-    <label>RA API Key:</label><br/>
-    <input type="text" id="apikey" required/><br/><br/>
-    <button type="submit">Link Account</button>
+  <form id="linkForm" autocomplete="off">
+    <label for="discordId">Discord ID:</label>
+    <input type="text" id="discordId" name="discordId" required autocomplete="username" />
+    
+    <label for="username">RA Username:</label>
+    <input type="text" id="username" name="username" required autocomplete="username" />
+    
+    <label for="apikey">RA API Key:</label>
+    <input type="password" id="apikey" name="apikey" required autocomplete="current-password" />
+    
+    <br />
+    <button type="submit" id="submitBtn">Link Account</button>
   </form>
-  <div id="status"></div>
-  <script>
-    document.getElementById("linkForm").onsubmit = async e => {
-      e.preventDefault();
-      const discordId = document.getElementById("discordId").value.trim();
-      const username = document.getElementById("username").value.trim();
-      const apikey = document.getElementById("apikey").value.trim();
+  <div id="status" role="alert" aria-live="polite"></div>
 
-      const res = await fetch(`https://retroachievements.org/API/API_GetUserSummary.php?z=${username}&y=${apikey}&u=${username}`);
-      if (res.ok) {
-        // Optional: send to your webhook/backend here
-        document.getElementById("status").innerText = "✅ Success! You can close this tab.";
+  <script>
+    const form = document.getElementById("linkForm");
+    const status = document.getElementById("status");
+    const submitBtn = document.getElementById("submitBtn");
+    const discordInput = form.discordId;
+    const usernameInput = form.username;
+    const apikeyInput = form.apikey;
+
+    function validateDiscordId(id) {
+      return /^\d{17,19}$/.test(id);
+    }
+
+    function setLoading(isLoading) {
+      if (isLoading) {
+        submitBtn.disabled = true;
+        discordInput.disabled = true;
+        usernameInput.disabled = true;
+        apikeyInput.disabled = true;
+        submitBtn.innerHTML = '<div class="spinner"></div> Linking...';
       } else {
-        document.getElementById("status").innerText = "❌ Invalid credentials!";
+        submitBtn.disabled = false;
+        discordInput.disabled = false;
+        usernameInput.disabled = false;
+        apikeyInput.disabled = false;
+        submitBtn.textContent = 'Link Account';
+      }
+    }
+
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      status.textContent = "";
+
+      const discordId = discordInput.value.trim();
+      const username = usernameInput.value.trim();
+      const apikey = apikeyInput.value.trim();
+
+      if (!discordId || !username || !apikey) {
+        status.textContent = "Please fill in all fields.";
+        return;
+      }
+
+      if (!validateDiscordId(discordId)) {
+        status.textContent = "❌ Invalid Discord ID. It should be a 17-19 digit number.";
+        return;
+      }
+
+      setLoading(true);
+
+      // Verify RA credentials first
+      const url = `https://retroachievements.org/API/API_GetUserSummary.php?z=${encodeURIComponent(username)}&y=${encodeURIComponent(apikey)}&u=${encodeURIComponent(username)}`;
+
+      try {
+        const res = await fetch(url);
+        if (res.ok) {
+          // Credentials valid - now send data to your backend proxy
+          try {
+            const backendResponse = await fetch("/api/register-user", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({
+                discord_id: discordId,
+                ra_username: username
+              })
+            });
+
+            if (!backendResponse.ok) {
+              const err = await backendResponse.json();
+              throw new Error(err.error || "Backend error");
+            }
+
+            status.textContent = "✅ Success! Your RetroAchievements account is linked and registered.";
+            form.reset();
+
+          } catch (backendErr) {
+            console.error(backendErr);
+            status.textContent = "⚠️ Linked RetroAchievements account, but failed to register. Please try again later.";
+          }
+        } else {
+          status.textContent = "❌ Invalid credentials or API error.";
+        }
+      } catch (err) {
+        status.textContent = "❌ Network error. Please try again.";
+      } finally {
+        setLoading(false);
       }
     };
   </script>
