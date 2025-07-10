@@ -1,10 +1,12 @@
-name: Test Discord Embed
+name: Check Achievements
 
 on:
+  schedule:
+    - cron: '*/15 * * * *' # every 15 minutes
   workflow_dispatch:
 
 jobs:
-  test-discord:
+  run-check:
     runs-on: ubuntu-latest
 
     steps:
@@ -14,17 +16,12 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
+          python-version: '3.10'
 
       - name: Install dependencies
         run: pip install requests
 
-      - name: Show current directory and files (debug)
-        run: |
-          pwd
-          ls -al
-
-      - name: Run test embed post
+      - name: Run check achievements script
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        run: python post_to_discord_embed.py
+        run: python check_achievements.py
