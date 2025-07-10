@@ -1,0 +1,29 @@
+name: Save User Registration
+
+on:
+  repository_dispatch:
+    types: [register-user]
+
+jobs:
+  append-user:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Append to JSON
+        run: |
+          USERNAME="${{ github.event.client_payload.ra_username }}"
+          DISCORD_ID="${{ github.event.client_payload.discord_id }}"
+
+          # Append user entry to file using jq
+          jq --arg id "$DISCORD_ID" --arg user "$USERNAME" \
+            '. += [{"discord_id": $id, "ra_username": $user}]' linked_users.json > temp.json && mv temp.json linked_users.json
+
+      - name: Commit and push
+        run: |
+          git config --global user.email "bot@example.com"
+          git config --global user.name "RA Tracker Bot"
+          git add linked_users.json
+          git commit -m "Add ${{ github.event.client_payload.ra_username }}"
+          git push
