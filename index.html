@@ -1,0 +1,37 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Link RetroAchievements</title>
+</head>
+<body>
+  <h2>Link your RetroAchievements account</h2>
+  <form id="linkForm">
+    <label>Discord ID:</label><br/>
+    <input type="text" id="discordId" required/><br/><br/>
+    <label>RA Username:</label><br/>
+    <input type="text" id="username" required/><br/><br/>
+    <label>RA API Key:</label><br/>
+    <input type="text" id="apikey" required/><br/><br/>
+    <button type="submit">Link Account</button>
+  </form>
+  <div id="status"></div>
+  <script>
+    document.getElementById("linkForm").onsubmit = async e => {
+      e.preventDefault();
+      const discordId = document.getElementById("discordId").value.trim();
+      const username = document.getElementById("username").value.trim();
+      const apikey = document.getElementById("apikey").value.trim();
+
+      const res = await fetch(`https://retroachievements.org/API/API_GetUserSummary.php?z=${username}&y=${apikey}&u=${username}`);
+      if (res.ok) {
+        // Optional: send to your webhook/backend here
+        document.getElementById("status").innerText = "✅ Success! You can close this tab.";
+      } else {
+        document.getElementById("status").innerText = "❌ Invalid credentials!";
+      }
+    };
+  </script>
+</body>
+</html>
