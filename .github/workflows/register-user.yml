@@ -1,0 +1,15 @@
+name: Register RetroAchievements User
+
+on:
+  repository_dispatch:
+    types: [register-user]
+
+jobs:
+  register:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print payload
+        run: |
+          echo "Discord ID: ${{ github.event.client_payload.discord_id }}"
+          echo "RA Username: ${{ github.event.client_payload.ra_username }}"
+          # You can do more here — write to a file, notify Discord, etc.
