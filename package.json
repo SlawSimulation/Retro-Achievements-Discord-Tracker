@@ -1,0 +1,27 @@
+{
+  "name": "retro-achievements-discord-tracker",
+  "version": "1.0.0",
+  "description": "[![Test Discord Embed](https://github.com/SlawSimulation/Retro-Achievements-Discord-Tracker/actions/workflows/test_discord_embed.yml/badge.svg)](https://github.com/SlawSimulation/Retro-Achievements-Discord-Tracker/actions/workflows/test_discord_embed.yml)",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SlawSimulation/Retro-Achievements-Discord-Tracker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/SlawSimulation/Retro-Achievements-Discord-Tracker/issues"
+  },
+  "homepage": "https://github.com/SlawSimulation/Retro-Achievements-Discord-Tracker#readme",
+  "dependencies": {
+    "discord.js": "^14.21.0",
+    "dotenv": "^17.2.0",
+    "node-fetch": "^3.3.2"
+  }
+}
